@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/v-mask/dist/v-mask.min.js"></script>
+    <style>
+        .section {
+            margin-top: 2em;
+        }
+       
+    </style>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app" class="container section">
+        <div class="alert alert-danger" v-if="hasError" role="alert">
+            {{ msgError }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">CNPJ</label>
+            <input type="email" v-mask="'##.###.###/####-##'" class="form-control" v-model="cnpj"/>
+
+            <button  class="btn btn-success m-3" @click="submitCNPJ" >search</button>
+        </div>
+        <div class="mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Coutry: {{ address.country }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">State: {{ address.state }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">City: {{ address.city }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Street: {{ address.street }}</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label  class="form-label">Value A</label>
+                    <input type="number" class="form-control" v-model="average.valueA"  />
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label class="form-label">Value B</label>
+                    <input type="number" class="form-control" v-model="average.valueB"  />
+                </div>
+            </div>
+        </div>
+        <div class="mb-3">
+            <button class="btn btn-success m-3" @click="submitAverage">
+                calculate average
+            </button>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Average: {{ avg.average }}</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    Vue.use(VueMask.VueMaskPlugin);
+    var app = new Vue({
+        el: "#app",
+        data() {
+            return {
+                hasError: false,
+                msgError: "",
+                cnpj: "",
+                average: {
+                    valueA: "",
+                    valueB: "",
+                },
+                address: {
+                    country: "",
+                    state: "",
+                    city: "",
+                    street: "",
+                },
+                avg: {
+                    average: "",
+                },
+            };
+        },
+
+        methods: {
+            displayAlert(msg) {
+                this.hasError = true
+                setTimeout(() => (this.hasError = false), 3000);
+                this.msgError = msg
+            },
+            submitCNPJ() {
+                if(!this.cnpj) {
+                    this.displayAlert('CNPJ is mandatory')
+                }
+                this.getAddress()  
+            },
+
+            submitAverage() {
+                if(!this.average.valueA && !this.average.valueB){
+                    this.displayAlert('value A and value B are mandatory')
+                }else {
+
+                    this.getAverage()
+                }
+
+            },
+            getAddress() {
+                let document = this.cnpj.replace(/[^a-zA-Z0-9]/g, "");
+
+                axios
+                    .get(`http://localhost:8080/api/mocks/address/${document}`)
+                    .then((response) => {
+                        this.address = response.data;
+                    })
+                    .catch((error) => {
+                        this.displayAlert(error.response.data.message)
+                    });
+            },
+            getAverage() {
+                axios
+                    .post(`http://localhost:8080/api/mocks/averages`, this.average)
+                    .then((response) => {
+                        this.avg = response.data;
+                    });
+            },
+        },
+ 
+    });
+</script>
+
+</html>
