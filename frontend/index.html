@@ -13,12 +13,66 @@
         .section {
             margin-top: 2em;
         }
+
+        body {
+            color: #c4cad0;
+            background-color: #2e4057;
+        }
+
+        .form-control:focus {
+            color: #c4cad0;
+            background-color: #42556d;
+            border-color: #798da7;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgb(0 123 255 / 25%);
+        }
+
+        .form-control {
+
+            display: block;
+            width: 100%;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #c4cad0;
+            background-color: #53657b;
+            background-clip: padding-box;
+            border: 1px solid #798da7;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+        .text-muted {
+            color: #bfd7ef!important;
+        }
+        .card {
+            background-color: #53657b;
+        }
+
+        .bg-light {
+             background-color: #5a6e88!important;
+        }
+
+        .navbar {
+            box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
+        }
+
+        .address {
+            color: #f8ae34;
+            text-transform: uppercase;
+        }
        
     </style>
     <title>Document</title>
 </head>
 
 <body>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img src="./images/logo_lumini.png" alt="" height="40">
+          </a>
+        </div>
+      </nav>
     <div id="app" class="container section">
         <div class="alert alert-danger" v-if="hasError" role="alert">
             {{ msgError }}
@@ -33,10 +87,10 @@
         <div class="mb-3">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Coutry: {{ address.country }}</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">State: {{ address.state }}</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">City: {{ address.city }}</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Street: {{ address.street }}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">COUNTRY: <span class="address">{{ address.country }}</span></h6>
+                    <h6 class="card-subtitle mb-2 text-muted">STATE: <span class="address"> {{ address.state }}</span></h6>
+                    <h6 class="card-subtitle mb-2 text-muted">CITY: <span class="address"> {{ address.city }}</span></h6>
+                    <h6 class="card-subtitle mb-2 text-muted">STREET: <span class="address">{{ address.street }}</span></h6>
                 </div>
             </div>
         </div>
@@ -61,7 +115,7 @@
             </button>
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Average: {{ avg.average }}</h5>
+                    <h5 class="card-subtitle mb-2 text-muted"> Average: <span class="address">{{ avg.average }}</span></h5>
                 </div>
             </div>
         </div>
@@ -102,8 +156,9 @@
             submitCNPJ() {
                 if(!this.cnpj) {
                     this.displayAlert('CNPJ is mandatory')
+                }else {
+                    this.getAddress()  
                 }
-                this.getAddress()  
             },
 
             submitAverage() {
