@@ -7,8 +7,8 @@ import br.com.codart.model.Average;
 import br.com.codart.model.Address;
 import br.com.codart.model.AverageDTO;
 import io.swagger.annotations.ApiOperation;
+import br.com.codart.exception.BusinessException;
 import br.com.codart.exception.NotFoundException;
-import br.com.codart.exception.DocumentInvalidException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,9 +26,9 @@ public class MockController {
     @ApiOperation(value = "returns an address based on cnpj")
     public Address getAddress(@PathVariable String cnpj) {
 
-       String document = Util.addMask(cnpj);
+        String document = Util.addMask(cnpj);
         if (!Util.isCnpj(document)) {
-            throw new DocumentInvalidException("CNPJ invalid");
+            throw new BusinessException("CNPJ invalid");
         }
         List<Address> address = Arrays
                 .asList(new Address("58.443.544/0001-08", "Brasil", "São Paulo", "Campinas", "Rua 01", "01"),
@@ -44,6 +44,9 @@ public class MockController {
     @PostMapping("/averages")
     @ApiOperation(value = "returns the mean between two parameters")
     public AverageDTO getAverage(@RequestBody Average avg) {
+        if (avg.getValueA() == null || avg.getValueB() == null) {
+            throw new BusinessException("Fields are required.");
+        }
         return new AverageDTO(avg.getValueA(), avg.getValueB());
     }
 
