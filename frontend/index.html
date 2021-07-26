@@ -162,7 +162,7 @@
             },
 
             submitAverage() {
-                if(!this.average.valueA && !this.average.valueB){
+                if(!this.average.valueA || !this.average.valueB){
                     this.displayAlert('value A and value B are mandatory')
                 }else {
 
